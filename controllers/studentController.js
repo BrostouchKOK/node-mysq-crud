@@ -74,17 +74,17 @@ const createStudent = async (req, res) => {
       "INSERT INTO students (name, roll_no, fees, medium) VALUES (?, ?, ?, ?)",
       [name, roll_no, fees, medium],
     );
-    if(!data){
-        return res.status(404).send({
-            success: false,
-            message: "Error in insert query",
-        })
+    if (!data) {
+      return res.status(404).send({
+        success: false,
+        message: "Error in insert query",
+      });
     }
 
     res.status(200).send({
-        success: true,
-        message: "Student record created successfully"
-    })
+      success: true,
+      message: "Student record created successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -95,4 +95,41 @@ const createStudent = async (req, res) => {
   }
 };
 
-module.exports = { getStudents, getStudentById, createStudent };
+const updateStudent = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    if (!studentId) {
+      return res.status(404).send({
+        success: false,
+        message: "Student id not found",
+      });
+    }
+
+    const { name, roll_no, fees, medium } = req.body;
+    const data = await db.query(
+      `UPDATE students SET name = ?, roll_no = ?, fees = ?, medium = ? WHERE id = ?`,
+      [name, roll_no, fees, medium, studentId],
+    );
+
+    if (!data) {
+      return res.status(500).send({
+        success: false,
+        message: "Error in update data"
+      });
+    }
+
+    res.status(200).send({
+        success: true,
+        message: "Student updated successfully",
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in update student API",
+      error,
+    });
+  }
+};
+
+module.exports = { getStudents, getStudentById, createStudent, updateStudent };
