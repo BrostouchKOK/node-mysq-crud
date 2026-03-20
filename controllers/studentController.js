@@ -114,14 +114,14 @@ const updateStudent = async (req, res) => {
     if (!data) {
       return res.status(500).send({
         success: false,
-        message: "Error in update data"
+        message: "Error in update data",
       });
     }
 
     res.status(200).send({
-        success: true,
-        message: "Student updated successfully",
-    })
+      success: true,
+      message: "Student updated successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -132,4 +132,41 @@ const updateStudent = async (req, res) => {
   }
 };
 
-module.exports = { getStudents, getStudentById, createStudent, updateStudent };
+const deleteStudent = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    if (!studentId) {
+      return res.status(404).send({
+        success: false,
+        message: "Student id not found",
+      });
+    }
+    const data = await db.query(`DELETE FROM students WHERE id = ?`, [studentId]);
+    if (!data) {
+      return res.status(500).send({
+        success: false,
+        message: "Error in delete data",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Deleted student successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in delete student API",
+      error,
+    });
+  }
+};
+
+module.exports = {
+  getStudents,
+  getStudentById,
+  createStudent,
+  updateStudent,
+  deleteStudent,
+};
