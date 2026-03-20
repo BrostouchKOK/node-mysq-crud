@@ -1,7 +1,8 @@
-const express = require('express');
-const colors = require('colors')
-const morgan = require('morgan')
-const dotenv = require('dotenv')
+const express = require("express");
+const colors = require("colors");
+const morgan = require("morgan");
+const dotenv = require("dotenv");
+const mySqlPool = require("./config/db");
 
 //config
 dotenv.config();
@@ -11,17 +12,31 @@ const app = express();
 
 //middleware
 app.use(express.json());
-app.use(morgan('dev'))
+app.use(morgan("dev"));
 
 //routes
-app.get("/test",(req,res)=>{
-    res.status(200).send('<h1>Nodejs Mysql App 1</h1>')
-})
+app.get("/test", (req, res) => {
+  res.status(200).send("<h1>Nodejs Mysql App 1</h1>");
+});
 
 //port
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8000;
 
-//listen
-app.listen(PORT, ()=>{
-    console.log(`Server Running on http://localhost:${process.env.PORT}`.bgMagenta.white);
-})
+//conditionaly listen
+mySqlPool
+  .query("SELECT 1")
+  .then(() => {
+    //MySQL
+    console.log("MySQL DB Connected".bgCyan.white);
+    
+    //listen
+    app.listen(PORT, () => {
+      console.log(
+        `Server running on http://localhost:${process.env.PORT}`.bgMagenta
+          .white,
+      );
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
